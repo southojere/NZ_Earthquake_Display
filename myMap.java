@@ -11,6 +11,7 @@ import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.OpenStreetMap.OpenStreetMapProvider;
+import de.fhpotsdam.unfolding.ui.CompassUI;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -20,6 +21,7 @@ public class myMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	UnfoldingMap map;
+	CompassUI compass;
 	URL geoNet;
 
 	List<earthquakes> quakes;
@@ -27,7 +29,7 @@ public class myMap extends PApplet {
 	Map<String, List<Float>> placeToLatAnLong;
 
 	public void setup() {
-		size(600, 400);
+		size(500, 400);
 
 		quakes = new ArrayList<earthquakes>();
 		locations = new HashSet<String>();
@@ -38,6 +40,8 @@ public class myMap extends PApplet {
 		map = new UnfoldingMap(this, new OpenStreetMapProvider());
 		map.zoomAndPanTo(7, wellingtonLoc);
 		MapUtils.createDefaultEventDispatcher(this, map);
+
+		compass = new CompassUI(this, map);
 
 		// LOADING URL
 		try {
@@ -55,12 +59,13 @@ public class myMap extends PApplet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		displayEarthquakes();
 	}
 
 	public void draw() {
 		map.setBackgroundColor(240);
 		map.draw();
-		displayEarthquakes();
+		compass.draw();
 
 		// Lat & Long display
 		fill(0);
@@ -79,6 +84,9 @@ public class myMap extends PApplet {
 		BufferedReader in = new BufferedReader(new InputStreamReader(geoNet.openStream()));
 		String inputLine;
 
+		String intensity = "";
+		int km = 0;
+		String dir = "";
 		while ((inputLine = in.readLine()) != null) {
 			// Removes HTML
 			Document doc = Jsoup.parse(inputLine);
@@ -87,12 +95,19 @@ public class myMap extends PApplet {
 			Scanner sc = new Scanner(hmtlRemovedtext);
 			while (sc.hasNext()) {
 				String thiss = sc.next();
+				if (thiss.equals("Location")) {
+					km = sc.nextInt();
+					sc.next(); // skips "km"
+					dir = sc.next(); // stores "NORTH, NORTH-EAST..."
+				}
+				if (thiss.equals("Intensity"))
+					intensity = sc.next();
 				if (thiss.equals("of")) {
 					String nextOfThiss = sc.next();
 					if (placeToLatAnLong.containsKey(nextOfThiss)) {
 						Location l = new Location(placeToLatAnLong.get(nextOfThiss).get(0),
 								placeToLatAnLong.get(nextOfThiss).get(1));
-						quakes.add(new earthquakes(nextOfThiss, l));
+						quakes.add(new earthquakes(nextOfThiss, l, intensity, km, dir));
 					}
 				}
 			}
@@ -126,10 +141,25 @@ public class myMap extends PApplet {
 
 	public void displayEarthquakes() {
 		for (earthquakes quake : quakes) {
-			SimplePointMarker quakeMaker = new SimplePointMarker(quake.getLoc());
-			map.addMarker(quakeMaker);
-			//println(quake.getsLocation() + " " + quake.getLoc());
+			SimplePointMarker quakeMarker = new SimplePointMarker(quake.getLoc());
+			// selecting appropriate color based on strength
+			quakeMarker = colourBasedOnIntensity(quakeMarker, quake);
+			map.addMarker(quakeMarker);
+			println(quakeMarker.getScreenPosition(map));
+
 		}
+	}
+
+	public SimplePointMarker colourBasedOnIntensity(SimplePointMarker p, earthquakes quake) {
+		if (quake.getIntesity().equals("unnoticeable"))
+			p.setColor(color(50, 50, 50, 100));
+		if (quake.getIntesity().equals("weak"))
+			p.setColor(color(131, 205, 230, 100));
+		if (quake.getIntesity().equals("light"))
+			p.setColor(color(36, 76, 255, 100));
+		if (quake.getIntesity().equals("moderate"))
+			p.setColor(color(33, 191, 99, 100));
+		return p;
 	}
 
 }
