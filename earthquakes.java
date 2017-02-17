@@ -1,12 +1,6 @@
 package unfolded;
 
-import java.awt.geom.Ellipse2D;
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
-
 import de.fhpotsdam.unfolding.geo.Location;
-import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 
 public class earthquakes {
 	private Location loc;
@@ -15,10 +9,14 @@ public class earthquakes {
 	String dir;// NORTH,EAST,SOUTH & WEST
 	private double mag;
 	private double depth;
+	String intesity;
 
-	public earthquakes(String place, Location l) {
+	public earthquakes(String place, Location l,String in, int kiloMeters,String direction) {
 		sLocation = place;
 		loc = l;
+		intesity=in;
+		dir=direction;
+		kmFrom=kiloMeters;
 	}
 
 	public Location getLoc() {
@@ -53,8 +51,12 @@ public class earthquakes {
 		this.depth = depth;
 	}
 
+	public String getIntesity(){
+		return this.intesity;
+	}
+
 	public String toString() {
-		return "Mag: " + mag + " depth: " + depth + " " + kmFrom + " Km From " + loc;
+		return  kmFrom+" km "+dir+" from "+"Location: "+sLocation +" lat and Long " + loc +" Intesity: " + intesity ;
 	}
 
 }
