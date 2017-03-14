@@ -49,6 +49,7 @@ public class myMap extends PApplet {
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			print("Error loading website");
 
 		}
 
@@ -66,6 +67,7 @@ public class myMap extends PApplet {
 		map.setBackgroundColor(240);
 		map.draw();
 		compass.draw();
+		drawScale();
 
 		// Lat & Long display
 		fill(0);
@@ -95,11 +97,8 @@ public class myMap extends PApplet {
 			Scanner sc = new Scanner(hmtlRemovedtext);
 			while (sc.hasNext()) {
 				String thiss = sc.next();
-				if (thiss.equals("Location")) {
-					km = sc.nextInt();
-					sc.next(); // skips "km"
-					dir = sc.next(); // stores "NORTH, NORTH-EAST..."
-				}
+				print(thiss);
+
 				if (thiss.equals("Intensity"))
 					intensity = sc.next();
 				if (thiss.equals("of")) {
@@ -107,7 +106,7 @@ public class myMap extends PApplet {
 					if (placeToLatAnLong.containsKey(nextOfThiss)) {
 						Location l = new Location(placeToLatAnLong.get(nextOfThiss).get(0),
 								placeToLatAnLong.get(nextOfThiss).get(1));
-						quakes.add(new earthquakes(nextOfThiss, l, intensity, km, dir));
+						quakes.add(new earthquakes(nextOfThiss, l, intensity));
 					}
 				}
 			}
@@ -142,6 +141,7 @@ public class myMap extends PApplet {
 	public void displayEarthquakes() {
 		for (earthquakes quake : quakes) {
 			SimplePointMarker quakeMarker = new SimplePointMarker(quake.getLoc());
+			quakeMarker.setRadius(quake.getRadFromIntesity(quake.getIntesity()));
 			// selecting appropriate color based on strength
 			quakeMarker = colourBasedOnIntensity(quakeMarker, quake);
 			map.addMarker(quakeMarker);
@@ -159,7 +159,19 @@ public class myMap extends PApplet {
 			p.setColor(color(36, 76, 255, 100));
 		if (quake.getIntesity().equals("moderate"))
 			p.setColor(color(33, 191, 99, 100));
+		if (quake.getIntesity().equals("strong"))
+			p.setColor(color(188, 191, 3, 100));
 		return p;
 	}
 
+	public void drawScale(){
+		int y = 10;
+		int x=10;
+		int rad=5;
+		ellipse(x,y,10,10);
+		y+=rad;
+		//ellipse(x,y,);
+			
+		
+	}
 }

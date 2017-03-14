@@ -11,12 +11,21 @@ public class earthquakes {
 	private double depth;
 	String intesity;
 
-	public earthquakes(String place, Location l,String in, int kiloMeters,String direction) {
+	public earthquakes(String place, Location l,String in) {
 		sLocation = place;
 		loc = l;
 		intesity=in;
-		dir=direction;
-		kmFrom=kiloMeters;
+		//kmFrom=kiloMeters;
+	}
+	public float getRadFromIntesity(String intensityy){
+		if(intensityy.equals("unnoticeable"))return 5;
+		else if(intensityy.equals("weak"))return 20;
+		else if(intensityy.equals("light"))return 40;
+		else if(intensityy.equals("moderate"))return 60;
+		else if(intensityy.equals("strong"))return 80;
+		else if(intensityy.equals("severe"))return 100;
+		else return 200;
+		
 	}
 
 	public Location getLoc() {
