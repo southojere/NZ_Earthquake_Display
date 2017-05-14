@@ -23,7 +23,7 @@ public class earthquakes {
 		else if(intensityy.equals("light"))return 40;
 		else if(intensityy.equals("moderate"))return 60;
 		else if(intensityy.equals("strong"))return 80;
-		else if(intensityy.equals("severe"))return 100;
+		else if(intensityy.equals("severe"))return 90;
 		else return 200;
 		
 	}

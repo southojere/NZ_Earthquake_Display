@@ -117,7 +117,6 @@ public class myMap extends PApplet {
 
 	public void addLocationsFromFile() {
 		try {
-			//passed file address of txt file of list of locations with lat&lon
 			Scanner sc = new Scanner(
 					new File("C://Users/Jeremy Southon/workspace/unfolded/src/unfolded/myLocations.txt"));
 			while (sc.hasNext()) {
@@ -162,6 +161,8 @@ public class myMap extends PApplet {
 			p.setColor(color(33, 191, 99, 100));
 		if (quake.getIntesity().equals("strong"))
 			p.setColor(color(188, 191, 3, 100));
+		if (quake.getIntesity().equals("severe"))
+			p.setColor(color(240, 70, 3, 100));
 		return p;
 	}
 
